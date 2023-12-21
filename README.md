@@ -1,10 +1,2 @@
 # battery-state-estimation-using-dual-kalman-filter
-cwcwqcqw
-cqwcqwcqw
-cqwcqw
-# test
-cwmcwmc
-wmcwmlc
-wkmkmqwc
-kqwmcmqw
-cwqc klwq
+This is state estimation of lithium ion battery. The code is modified from Plett. The data is from Stanford. First I extract the soc and ocv curve from diagnostic test. Then using UDDS cycle test, I get the parameter using recursive least square. And lastly, doing soc and R0 estimation using dual sigma point kalman filter. The error is already low.
