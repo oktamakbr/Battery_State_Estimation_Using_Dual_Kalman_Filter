@@ -1,7 +1,8 @@
 clear, clc
 
-load W8diag1.mat
-load W8cycle1.mat
+% using cell W8
+load W8diag1.mat % input diagnostic test number 1
+load W8cycle1.mat % input cycle test number 1
 
 [soc,ocv,Q] = SOC_OCV(W8diag1); % find Q, OCV, SOC from diagnostic test
 [R0,R1,C,ocvRLS,errorvdisest,z,tdis,vdis,curdis] = parameterest(W8cycle1,Q); % find parameter from cycle test
