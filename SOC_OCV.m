@@ -27,5 +27,4 @@ ocv = interp1(socraw,ocvraw,soc);
 ocv(1) = v(ind(end));
 ocv(end) = v(ind(1)-1);
 
-
 end
