@@ -1,5 +1,4 @@
-% This code is used for estimating SOC and OCV relationship, cell capacity
-% [Q]
+% This code is used for estimating SOC and OCV relationship, cell capacity [Q]
 
 function [soc,ocv,Q] = SOC_OCV(W8diag)
 
