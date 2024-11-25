@@ -1,3 +1,6 @@
+% This code is used for estimating SOC and OCV relationship, cell capacity
+% [Q]
+
 function [soc,ocv,Q] = SOC_OCV(W8diag)
 
 % step 1 = rest
@@ -26,5 +29,6 @@ soc = 0:0.01:1;
 ocv = interp1(socraw,ocvraw,soc);
 ocv(1) = v(ind(end));
 ocv(end) = v(ind(1)-1);
+
 
 end
