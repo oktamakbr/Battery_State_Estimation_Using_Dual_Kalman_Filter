@@ -1,8 +1,10 @@
+% This code is used for estimationg SOC and R0
+
 function [zest,R0est] = SPKF(Q,R0,R1,C,vdis,curdis,soc,ocv,xhat,R0hat)
 
 sigmaxhat = diag([1e0 1e-3]);
-sigmaw = 3e-1; % kovarians proses noise
-sigmav = 4e-3; % kovarians sensor noise
+sigmaw = 3e-1; % covariance proses noise
+sigmav = 4e-3; % covariance sensor noise
 L = length(xhat) + length(sigmaw) + length(sigmav);
 h = sqrt(3);
 alpha1 = (h*h-L)/(h*h);
@@ -20,10 +22,10 @@ I  = curdis;
 datalength = length(vdis);
 
 for i = 1:datalength
-% step 1a (prediksi xhatminus), pembuatan xhat augment
+% step 1a (xhatminus prediction), making xhat augment
 [sigmaxhata,p] = chol(sigmaxhat,'lower');
 Snoise = real(chol(diag([sigmaw; sigmav]),'lower'));
-if p>0,
+if p>0
 fprintf('Cholesky error.  Recovering...\n')
 theAbsDiag = abs(diag(sigmaxhat));
 sigmaxhata = diag(max(sqrt(theAbsDiag),sqrt(sigmaw)));
@@ -32,33 +34,33 @@ sigmaxhata=[real(sigmaxhata) zeros([2 2]); zeros([2 2]) Snoise];
 xhat = [xhat; 0; 0]; % [VRC; SOC; W; V]
 % sigmaxhata = blkdiag(real(sqrt(sigmaxhat)),sqrt(sigmaw),sqrt(sigmav));
 xa = xhat(:,ones([1 2*L+1])) + h*[zeros([L 1]), sigmaxhata, -sigmaxhata]; % xhat augment
-Xx(1,:) = RC*xa(1,:) + (1-RC)*(I(i) + xa(3,:))*R1; % xhat untuk VRC
-Xx(2,:) = xa(2,:) - (I(i) + xa(3,:))/3600/Q*0.1; % xhat untuk SOC
+Xx(1,:) = RC*xa(1,:) + (1-RC)*(I(i) + xa(3,:))*R1; % xhat for VRC
+Xx(2,:) = xa(2,:) - (I(i) + xa(3,:))/3600/Q*0.1; % xhat for SOC
 Xx(2,:) = min(1.05,max(-0.05,Xx(2,:)));
-xhat = Xx*alpham; % perkalian dengan konstanta
+xhat = Xx*alpham; % product with constant
 
 % step 1b
 Xs = Xx - xhat(:,ones([1 2*L+1]));
 sigmaxhat = Xs*diag(alphac)*Xs';
 
-% step 1c (penentuan prediksi voltage)
+% step 1c (voltage prediciton determnination)
 Y = interp1(soc,ocv,Xx(2,:));
 Y = Y - Xx(1,:) - R0hat*I(i) + xa(4,:);
 yhat = Y*alpham;
 
-% step 2a (penentuan kalman gain)
+% step 2a (kalman gain determination)
 Ys = Y - yhat; 
 sigmay = Ys*diag(alphac)*Ys';
 sigmaxy = Xs*diag(alphac)*Ys';
 K = sigmaxy/sigmay;
 
-% step 2b (estimasi xhat baru)
-r = vdis(i) - yhat; % perbedaan antar voltage pengukuran dan voltage prediksi
+% step 2b (new xhat estimation)
+r = vdis(i) - yhat; % the difference between measurement voltage and prediction voltage)
 if r^2 > 100*sigmay, K(:,1)=0.0; end
 xhat = xhat + K*r;
 xhat(2)=min(1.05,max(-0.05,xhat(2)));
 
-% step 2c (kovarians xhat baru)
+% step 2c (new xhat covariance)
 sigmaxhat = sigmaxhat - K*sigmay*K';
 [~,S,V] = svd(sigmaxhat);
 HH = V*S*V';
@@ -78,7 +80,7 @@ end
     W = R0hat*[1 1 1] + h*sqrt(SigmaR0)*[0 1 -1];
     % Next line is simplified output equation
     D = interp1(soc,ocv,xhat(2,:))*[1 1 1] - W*I(i);
-    % Next line is enhanced output equation -- uncomment the next line for two quiz questions!
+    % Next line is enhanced output equation
     D = D - xhat(1,:);
     Dhat = D*R0m;
     % Step 2a -- gain estimate 
@@ -91,7 +93,6 @@ end
     R0hat = R0hat + KR0*(vdis(i) - Dhat);
     % Step 2c -- R0 estimatation error covariance
     SigmaR0 = SigmaR0 - KR0*Sd*KR0';
-  % **** end of simple 1-state SPKF to estimate R0 **** 
 
 zest(i,:) = xhat;
 yhatstore(i,:) = yhat;
