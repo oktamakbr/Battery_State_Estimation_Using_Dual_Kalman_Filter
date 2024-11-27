@@ -3,7 +3,7 @@
 function [zest,R0est] = SPKF(Q,R0,R1,C,vdis,curdis,soc,ocv,xhat,R0hat)
 
 sigmaxhat = diag([1e0 1e-3]);
-sigmaw = 3e-1; % covariance proses noise
+sigmaw = 3e-1; % covariance process noise
 sigmav = 4e-3; % covariance sensor noise
 L = length(xhat) + length(sigmaw) + length(sigmav);
 h = sqrt(3);
@@ -43,7 +43,7 @@ xhat = Xx*alpham; % product with constant
 Xs = Xx - xhat(:,ones([1 2*L+1]));
 sigmaxhat = Xs*diag(alphac)*Xs';
 
-% step 1c (voltage prediciton determnination)
+% step 1c (voltage prediciton determination)
 Y = interp1(soc,ocv,Xx(2,:));
 Y = Y - Xx(1,:) - R0hat*I(i) + xa(4,:);
 yhat = Y*alpham;
@@ -80,7 +80,6 @@ end
     W = R0hat*[1 1 1] + h*sqrt(SigmaR0)*[0 1 -1];
     % Next line is simplified output equation
     D = interp1(soc,ocv,xhat(2,:))*[1 1 1] - W*I(i);
-    % Next line is enhanced output equation
     D = D - xhat(1,:);
     Dhat = D*R0m;
     % Step 2a -- gain estimate 
@@ -93,6 +92,7 @@ end
     R0hat = R0hat + KR0*(vdis(i) - Dhat);
     % Step 2c -- R0 estimatation error covariance
     SigmaR0 = SigmaR0 - KR0*Sd*KR0';
+  % **** end of simple 1-state SPKF to estimate R0 **** 
 
 zest(i,:) = xhat;
 yhatstore(i,:) = yhat;
