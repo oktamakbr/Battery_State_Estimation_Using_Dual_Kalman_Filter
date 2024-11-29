@@ -1,4 +1,4 @@
-% This code is used for estimationg SOC and R0
+% This code is used for estimating SOC and R0
 
 function [zest,R0est] = SPKF(Q,R0,R1,C,vdis,curdis,soc,ocv,xhat,R0hat)
 
