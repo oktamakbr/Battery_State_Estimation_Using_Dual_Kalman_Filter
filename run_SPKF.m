@@ -3,7 +3,7 @@ clear, clc
 load W8diag1.mat % input diagnostic test
 load W8cycle1.mat % input cycle test
 
-xhat = [0; 0.6]; % initial vRc and soc estimate
+xhat = [0; 0.6]; % initial vRc and SOC estimate
 R0hat = 0.01; % initial R0 estimate
 
 [soc,ocv,Q] = SOC_OCV(W8diag1); % find Q, OCV, SOC from diagnostic test
@@ -12,7 +12,7 @@ R0hat = 0.01; % initial R0 estimate
 
 R0 = R0*ones(length(R0est),1);
 errorvdisest; % error between measurement and estimation voltage
-errorsoc = rmse(zest(:,2),z); % error between soc real and estimation
+errorsoc = rmse(zest(:,2),z); % error between SOC real and estimation
 errorR0 = rmse(R0est,R0); % error between R0 real and estimation
 
 % figure of true and estimate Voltage
