@@ -1,4 +1,5 @@
-% This code is used for estimating internal resistance (R0), diffusion resistance (R1), capacitance (C) from UDDS data in cell W8 cycle 1
+% This code is used for estimating internal resistance (R0), diffusion
+% resistance (R1), capacitance (C) from UDDS data in cell W8 cycle 1
 
 function [R0,R1,C,ocvRLS,errorvdisest,z,tdis,vdis,curdis,vdisest] = parameterest(W8cycle,Q)
 
